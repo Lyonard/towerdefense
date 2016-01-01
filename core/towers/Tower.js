@@ -13,5 +13,3 @@ Tower.prototype.getX = function(){
 Tower.prototype.getY = function(){
     return this.positionY;
 };
-
-Tower.pathfinding = {};

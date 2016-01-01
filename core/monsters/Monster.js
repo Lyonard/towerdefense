@@ -2,10 +2,10 @@
  * Created by Roberto on 31/12/15.
  */
 function Monster() {
-    this.hp = 1;
-    this.cellPerTurn = 1;
-    this.positionX = 0;
-    this.positionY = 0;
+    this.hp = 0;
+    this.cellPerTurn = 0;
+    this.positionX = 0 || TD.entry[0];
+    this.positionY = 0 || TD.entry[1];
     this.id = TD.monsterAutoIncrement;
 
     TD.monsterAutoIncrement++;
@@ -25,7 +25,7 @@ Monster.prototype.getY = function () {
 
 Monster.prototype.doMove = function () {
     if (this.isDead()) return null;
-debugger;
+
     var pathToExit = TD.map.findPath([this.positionX, this.positionY]);
 
     if(pathToExit.length > 1){
@@ -41,7 +41,7 @@ debugger;
 };
 
 Monster.prototype.move = function (cell) {
-    if (Math.abs(this.positionX + this.positionY - cell[0] - cell[1]) <= 0) {
+    if (Math.abs(this.positionX + this.positionY - cell[0] - cell[1]) == 0) {
         throw "Invalid move: (" + this.positionX + "," + this.positionY + ") -> (" + cell[0] + ", " + cell[1] + ")";
     }
     this.positionX = cell[0];

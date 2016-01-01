@@ -43,7 +43,7 @@ TD.events = {
 
 TD.test = {
     addEnemyAndMove: function(){
-        TD.globalFunctions.addEnemy(new Monster());
+        TD.globalFunctions.addEnemy(new Monster1());
         console.log(TD.enemies[0]);
         TD.enemies[0].doMove();
         console.log(TD.enemies[0]);

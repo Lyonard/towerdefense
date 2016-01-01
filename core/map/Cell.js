@@ -10,11 +10,17 @@ function Cell(){
 }
 
 Cell.prototype.thereIsAMonster = function(){
-    return this.content instanceof Monster;
+    for( var i = 0; i < this.content.length; i++){
+        if(this.content instanceof Monster) return true;
+    }
+    return false;
 };
 
 Cell.prototype.thereIsATower = function(){
-    return this.content instanceof Tower;
+    for( var i = 0; i < this.content.length; i++){
+        if(this.content instanceof Tower) return true;
+    }
+    return false;
 };
 
 Cell.prototype.empty = function() {
