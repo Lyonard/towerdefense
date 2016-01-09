@@ -2,12 +2,13 @@
  * Created by Roberto on 01/01/16.
  */
 
-function Monster1(){
+var Monster1 = function(){
     Monster.call(this);
     this.hp = 10;
+    this.currentHp = 10;
     this.cellPerTurn = 1;
 
-}
+};
 // inherit Monster
 Monster1.prototype = new Monster();
 

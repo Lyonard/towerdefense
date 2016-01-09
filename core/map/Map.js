@@ -97,6 +97,14 @@ Map.prototype.evalAlphaGrid = function(){
     }
 };
 
+Map.heurustics = {
+    EuclideanDistance: function (point, goal) {	// diagonals are considered a little farther than cardinal directions
+        // diagonal movement using Euclide (AC = sqrt(AB^2 + BC^2))
+        // where AB = x2 - x1 and BC = y2 - y1 and AC will be [x3, y3]
+        return sqrt(pow(point[0] - goal[0], 2) + pow(point[1] - goal[1], 2));
+    }
+};
+
 /**
  * Based on Edsger Dijkstra's 1959 algorithm and work by:
  * Andrea Giammarchi, Alessandro Crugnola, Jeroen Beckers
@@ -350,7 +358,4 @@ Map.prototype.findPath = function (pathStart) {
     // that is empty if no path is possible
     return calculatePath();
 
-} // end of findPath() function
-
-
-
+};// end of findPath() function

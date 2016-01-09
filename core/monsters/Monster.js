@@ -3,6 +3,7 @@
  */
 function Monster() {
     this.hp = 0;
+    this.currentHp = 0;
     this.cellPerTurn = 0;
     this.positionX = 0 || TD.entry[0];
     this.positionY = 0 || TD.entry[1];
@@ -12,7 +13,7 @@ function Monster() {
 }
 
 Monster.prototype.isDead = function () {
-    return this.hp <= 0;
+    return this.currentHp <= 0;
 };
 
 Monster.prototype.getX = function () {
@@ -47,3 +48,14 @@ Monster.prototype.move = function (cell) {
     this.positionX = cell[0];
     this.positionY = cell[1];
 };
+
+Monster.prototype.beDamaged = function(damage){
+    this.currentHp -= damage;
+    if(this.isDead()){
+        TD.globalFunctions.removeEnemy(this);
+    }
+};
+
+Monster.prototype.resetHp = function(){
+    this.currentHp = hp;
+}
