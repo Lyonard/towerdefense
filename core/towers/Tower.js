@@ -7,6 +7,7 @@ function Tower(){
     this.shotDamage = 0;
     this.rangeRadius = 0;
     this.distanceFunction = this.distances.euclidean;
+    this.price = 0;
 
     this.id = TD.towerAutoIncrement;
 

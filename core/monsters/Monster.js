@@ -48,6 +48,11 @@ Monster.prototype.move = function (cell) {
     TD.globalFunctions.removeEnemy(this);
     this.positionX = cell[0];
     this.positionY = cell[1];
+
+    if(cell == TD.exit){
+        TD.events.exitReached();
+    }
+
     TD.globalFunctions.addEnemy(this, [this.positionX, this.positionY])
 };
 
@@ -55,9 +60,14 @@ Monster.prototype.beDamaged = function(damage){
     this.currentHp -= damage;
     if(this.isDead()){
         TD.globalFunctions.removeEnemy(this);
+        TD.events.monsterDied(this);
     }
 };
 
 Monster.prototype.resetHp = function(){
     this.currentHp = hp;
-}
+};
+
+Monster.prototype.getMoneyValue = function(){
+    return this.hp;
+};

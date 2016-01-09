@@ -6,7 +6,9 @@ var TD = TD || {
         entry: [0, 4],
         exit: [9, 4],
         monsterAutoIncrement: 1,
-        towerAutoIncrement: 1
+        towerAutoIncrement: 1,
+        playerLives : 10,
+        playerCoins : 10
     };
 
 TD.init = function () {
@@ -18,6 +20,16 @@ TD.init = function () {
 
     //towers
     TD.towers = [];
+    TD.player = new Player();
+};
+
+TD.game = {
+    startGame: function(){
+
+    },
+    gameOver : function(){
+        console.log("gameOver");
+    }
 };
 
 TD.globalFunctions = {
@@ -96,9 +108,23 @@ TD.globalFunctions = {
 TD.events = {
     exitReached: function(monster){
         //evaluate hearts to be removed to the player.
+        var damage = monster.hp;
+        TD.player.beDamaged( damage );
         //remove the monster from the map
+        TD.globalFunctions.removeEnemy(monster);
         //check if the player is died
+        if(TD.player.isDied()){
+            TD.game.gameOver();
+        }
+    },
+    monsterDied: function(monster){
+        //get monster money value
+        var money = monster.getMoneyValue();
+
+        //add this value to players's money
+        TD.player.addMoney(money);
     }
+
 };
 
 TD.test = {

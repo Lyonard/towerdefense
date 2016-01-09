@@ -3,8 +3,9 @@
  */
 function Cannon(){
     Tower.call(this);
-    this.shotDamage = 10;
+    this.shotDamage = 1;
     this.rangeRadius = 3;
+    this.price = 1;
 
 }
 // inherit Tower
