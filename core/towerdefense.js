@@ -21,14 +21,18 @@ TD.init = function () {
 };
 
 TD.globalFunctions = {
-    addEnemy: function (enemy) {
+    addEnemy: function (enemy, position) {
         if (!enemy instanceof Monster) {
             throw "Not a monster";
         }
 
+        if(typeof position == 'undefined'){
+            position = TD.entry;
+        }
+
         TD.enemies.push(enemy);
-        var startX = TD.entry[0] ;
-        var startY = TD.entry[1] ;
+        var startX = position[0] ;
+        var startY = position[1] ;
         TD.map.grid[startX][startY].addEnemy(enemy);
         return enemy;
     },
@@ -51,7 +55,20 @@ TD.globalFunctions = {
         var posY = enemy.getY();
         var ID = enemy.id;
 
-        return this.grid[posX][posY].removeEnemy(ID);
+        var idx = -1;
+        for(var i = 0; i < TD.enemies.length; i++){
+            if(TD.enemies[i] instanceof Monster && TD.enemies[i].id == ID) {
+                idx = i;
+                break;
+            }
+        }
+        if(idx < 0){
+            console.debug("Error while deleting enemy from TD.enemies");
+            return false;
+        }
+
+        TD.enemies.splice(idx,1);
+        return TD.map.grid[posX][posY].removeEnemy(ID);
     },
 
     removeTower: function( tower ){
@@ -59,7 +76,20 @@ TD.globalFunctions = {
         var posY = tower.getY();
         var ID = tower.id;
 
-        return this.grid[posX][posY].removeTower(ID);
+        var idx = -1;
+        for(var i = 0; i < TD.towers.length; i++){
+            if(TD.towers[i] instanceof Tower && TD.towers[i].id == ID) {
+                idx = i;
+                break;
+            }
+        }
+        if(idx < 0){
+            console.debug("Error while deleting tower from TD.towers");
+            return false;
+        }
+
+        TD.towers.splice(idx,1);
+        return TD.map.grid[posX][posY].removeTower(ID);
     }
 };
 
@@ -77,5 +107,26 @@ TD.test = {
         console.log(TD.enemies[0]);
         TD.enemies[0].doMove();
         console.log(TD.enemies[0]);
+    },
+    showMap: function(){
+        var map = TD.map.grid;
+        var towers = TD.towers;
+        var monsters = TD.enemies;
+        console.group("MAP");
+        console.log(">> grid");
+        for(var i = 0; i < map.length; i++){
+            for (var j = 0; j < map[i].length; j++){
+                if(!map[i][j].empty()){
+                    console.log(i,j, map[i][j].content);
+                }
+            }
+        }
+        console.log(">> towers");
+        console.log(towers);
+
+        console.log(">> monsters");
+        console.log(monsters);
+        console.groupEnd();
     }
+
 };

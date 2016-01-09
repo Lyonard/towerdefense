@@ -26,7 +26,7 @@ Cell.prototype.thereIsATower = function(){
 Cell.prototype.getEnemies = function(){
     var enemies = [];
     for( var i = 0; i < this.content.length; i++){
-        if(this.content[i] instanceof Monster) enemies.push();
+        if(this.content[i] instanceof Monster) enemies.push(this.content[i]);
     }
     return enemies;
 };
@@ -34,7 +34,7 @@ Cell.prototype.getEnemies = function(){
 Cell.prototype.getTowers = function(){
     var towers = [];
     for( var i = 0; i < this.content.length; i++){
-        if(this.content[i] instanceof Tower) towers.push();
+        if(this.content[i] instanceof Tower) towers.push(this.content[i]);
     }
     return towers;
 };
@@ -53,7 +53,7 @@ Cell.prototype.removeEnemy = function(id){
         }
     }
     if(idx > -1){
-        this.content = this.content.splice(idx,1);
+        this.content.splice(idx,1);
         return true;
     }
     return false;
@@ -73,7 +73,7 @@ Cell.prototype.removeTower = function( id ){
         }
     }
     if(idx > -1){
-        this.content = this.content.splice(idx,1);
+        this.content.splice(idx,1);
         return true;
     }
     return false;

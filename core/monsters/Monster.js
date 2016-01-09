@@ -45,8 +45,10 @@ Monster.prototype.move = function (cell) {
     if (Math.abs(this.positionX + this.positionY - cell[0] - cell[1]) == 0) {
         throw "Invalid move: (" + this.positionX + "," + this.positionY + ") -> (" + cell[0] + ", " + cell[1] + ")";
     }
+    TD.globalFunctions.removeEnemy(this);
     this.positionX = cell[0];
     this.positionY = cell[1];
+    TD.globalFunctions.addEnemy(this, [this.positionX, this.positionY])
 };
 
 Monster.prototype.beDamaged = function(damage){

@@ -76,13 +76,13 @@ Tower.prototype.distances = {
 };
 
 Tower.prototype.heuristics = {
-    closest : function(enemies, distanceFunction){
+    closest : function(enemies, distanceFunction, callerObj){
         var closestEnemy = null;
         var shortestDistance = Number.MAX_VALUE;
         for(var i = 0; i < enemies.length; i++){
             var enemy = enemies[i];
             var enemyCoords = [enemy.getX(), enemy.getY()];
-            var enemyDistance = distanceFunction([this.getX(), this.getY()], enemyCoords);
+            var enemyDistance = distanceFunction([callerObj.getX(), callerObj.getY()], enemyCoords);
             if( enemyDistance < shortestDistance){
                 closestEnemy = enemy;
                 shortestDistance = enemyDistance;
@@ -155,4 +155,9 @@ Tower.prototype.attack = function(enemy){
     enemy.beDamaged(this.shotDamage);
 };
 
-Tower.prototype.doMove = function(){};
+Tower.prototype.doMove = function(){
+    var enemiesInRange = this.getEnemiesInRadius();
+    var target = this.heuristics.closest( enemiesInRange, this.distanceFunction, this );
+
+    this.attack( target );
+};
