@@ -12,52 +12,57 @@
  *                      The first number represents the X position, the second the Y position
  * @constructor
  */
-var Map = function (size, entryPos, exitPos) {
+var Map = function ( size, entryPos, exitPos ) {
 
-    if (this.validateSize(size[0], size[1])) {
-        this.width = size[0];
-        this.height = size[1];
+    if ( this.validateSize( size[ 0 ], size[ 1 ] ) ) {
+        this.width  = size[ 0 ];
+        this.height = size[ 1 ];
     }
     else {
-        throw "Invalid size: " + size[0] + "x" + size[1];
+        throw "Invalid size: " + size[ 0 ] + "x" + size[ 1 ];
     }
 
-    if (this.validatePosition(entryPos[0], entryPos[1])) {
-        this.entryPosX = entryPos[0];
-        this.entryPosY = entryPos[1];
-    }
-    else {
-        //console.error("Invalid exit position: (" +exitPos[0]+", "+exitPos[1]+")");
-        throw "Invalid entry position: (" + entryPos[0] + ", " + entryPos[1] + ")";
-    }
-
-    if (this.validatePosition(exitPos[0], exitPos[1])) {
-        this.exitPosX = exitPos[0];
-        this.exitPosY = exitPos[1];
+    if ( this.validatePosition( entryPos[ 0 ], entryPos[ 1 ] ) ) {
+        this.entryPosX = entryPos[ 0 ];
+        this.entryPosY = entryPos[ 1 ];
     }
     else {
         //console.error("Invalid exit position: (" +exitPos[0]+", "+exitPos[1]+")");
-        throw "Invalid exit position: (" + exitPos[0] + ", " + exitPos[1] + ")";
+        throw "Invalid entry position: (" + entryPos[ 0 ] + ", " + entryPos[ 1 ] + ")";
+    }
+
+    if ( this.validatePosition( exitPos[ 0 ], exitPos[ 1 ] ) ) {
+        this.exitPosX = exitPos[ 0 ];
+        this.exitPosY = exitPos[ 1 ];
+    }
+    else {
+        //console.error("Invalid exit position: (" +exitPos[0]+", "+exitPos[1]+")");
+        throw "Invalid exit position: (" + exitPos[ 0 ] + ", " + exitPos[ 1 ] + ")";
     }
 
     this.initGrid();
     this.evalAlphaGrid();
 
-    console.debug("Map created. Size: " + this.width + "x" + this.height);
-    console.debug("Entry position: (" + this.entryPosX + ", " + this.entryPosY + ")");
-    console.debug("Exit position: (" + this.exitPosX + ", " + this.exitPosY + ")");
+    console.debug( "Map created. Size: " + this.width + "x" + this.height );
+    console.debug( "Entry position: (" + this.entryPosX + ", " + this.entryPosY + ")" );
+    console.debug( "Exit position: (" + this.exitPosX + ", " + this.exitPosY + ")" );
 };
-
 
 /**
  * @param x int
  * @param y int
  * @returns {boolean}
  */
-Map.prototype.validatePosition = function (x, y) {
-    if (x < 0) return false;
-    if (y < 0) return false;
-    if (x >= this.width) return false;
+Map.prototype.validatePosition = function ( x, y ) {
+    if ( x < 0 ) {
+        return false;
+    }
+    if ( y < 0 ) {
+        return false;
+    }
+    if ( x >= this.width ) {
+        return false;
+    }
 
     return ( y < this.height );
 };
@@ -67,41 +72,43 @@ Map.prototype.validatePosition = function (x, y) {
  * @param y int
  * @returns {boolean}
  */
-Map.prototype.validateSize = function (x, y) {
-    if (x < 0) return false;
+Map.prototype.validateSize = function ( x, y ) {
+    if ( x < 0 ) {
+        return false;
+    }
     return y >= 0;
 };
 
-Map.prototype.initGrid = function(){
+Map.prototype.initGrid = function () {
     this.grid = [];
-    for(var i = 0; i < this.width; i++){
-        this.grid[i] = [];
-        for(var j = 0; j < this.height; j++){
-            this.grid[i][j] = new Cell();
+    for ( var i = 0; i < this.width; i++ ) {
+        this.grid[ i ] = [];
+        for ( var j = 0; j < this.height; j++ ) {
+            this.grid[ i ][ j ] = new Cell();
         }
     }
 };
 
-Map.prototype.evalAlphaGrid = function(){
+Map.prototype.evalAlphaGrid = function () {
     this.alphaGrid = [];
-    for(var i = 0; i < this.width; i++){
-        this.alphaGrid[i] = [];
-        for(var j = 0; j < this.height; j++){
-            if( this.grid[i][j].thereIsATower() ) {
-                this.alphaGrid[i][j] = 1;
+    for ( var i = 0; i < this.width; i++ ) {
+        this.alphaGrid[ i ] = [];
+        for ( var j = 0; j < this.height; j++ ) {
+            if ( this.grid[ i ][ j ].thereIsATower() ) {
+                this.alphaGrid[ i ][ j ] = 1;
             }
-            else{
-                this.alphaGrid[i][j] = 0;
+            else {
+                this.alphaGrid[ i ][ j ] = 0;
             }
         }
     }
 };
 
 Map.heurustics = {
-    EuclideanDistance: function (point, goal) {	// diagonals are considered a little farther than cardinal directions
+    EuclideanDistance: function ( point, goal ) {	// diagonals are considered a little farther than cardinal directions
         // diagonal movement using Euclide (AC = sqrt(AB^2 + BC^2))
         // where AB = x2 - x1 and BC = y2 - y1 and AC will be [x3, y3]
-        return sqrt(pow(point[0] - goal[0], 2) + pow(point[1] - goal[1], 2));
+        return sqrt( pow( point[ 0 ] - goal[ 0 ], 2 ) + pow( point[ 1 ] - goal[ 1 ], 2 ) );
     }
 };
 
@@ -115,14 +122,14 @@ Map.heurustics = {
  * @param pathEnd {Array}
  * @returns {*}
  */
-Map.prototype.findPath = function (pathStart) {
-    var world = this.alphaGrid;
-    var pathEnd = [this.exitPosX, this.exitPosY];
+Map.prototype.findPath = function ( pathStart ) {
+    var world   = this.alphaGrid;
+    var pathEnd = [ this.exitPosX, this.exitPosY ];
 
     // shortcuts for speed
-    var abs = Math.abs;
-    var max = Math.max;
-    var pow = Math.pow;
+    var abs  = Math.abs;
+    var max  = Math.max;
+    var pow  = Math.pow;
     var sqrt = Math.sqrt;
 
     // the world data are integers:
@@ -135,14 +142,15 @@ Map.prototype.findPath = function (pathStart) {
     // Note that this A-star implementation expects the world array to be square:
     // it must have equal height and width. If your game world is rectangular,
     // just fill the array with dummy values to pad the empty space.
-    var worldWidth = world[0].length;
+    var worldWidth  = world[ 0 ].length;
     var worldHeight = world.length;
-    var worldSize = worldWidth * worldHeight;
+    var worldSize   = worldWidth * worldHeight;
 
     // which heuristic should we use?
     // default: no diagonals (Manhattan)
     var distanceFunction = ManhattanDistance;
-    var findNeighbours = function(){};
+    var findNeighbours   = function () {
+    };
 
     /*
 
@@ -169,20 +177,21 @@ Map.prototype.findPath = function (pathStart) {
     // distanceFunction functions
     // these return how far away a point is to another
 
-    function ManhattanDistance(Point, Goal) {	// linear movement - no diagonals - just cardinal directions (NSEW)
-        return abs(Point.x - Goal.x) + abs(Point.y - Goal.y);
-    }
-    /*
-    function DiagonalDistance(Point, Goal) {	// diagonal movement - assumes diag dist is 1, same as cardinals
-        return max(abs(Point.x - Goal.x), abs(Point.y - Goal.y));
+    function ManhattanDistance( Point, Goal ) {	// linear movement - no diagonals - just cardinal directions (NSEW)
+        return abs( Point.x - Goal.x ) + abs( Point.y - Goal.y );
     }
 
-    function EuclideanDistance(Point, Goal) {	// diagonals are considered a little farther than cardinal directions
-        // diagonal movement using Euclide (AC = sqrt(AB^2 + BC^2))
-        // where AB = x2 - x1 and BC = y2 - y1 and AC will be [x3, y3]
-        return sqrt(pow(Point.x - Goal.x, 2) + pow(Point.y - Goal.y, 2));
-    }
-    */
+    /*
+     function DiagonalDistance(Point, Goal) {	// diagonal movement - assumes diag dist is 1, same as cardinals
+     return max(abs(Point.x - Goal.x), abs(Point.y - Goal.y));
+     }
+
+     function EuclideanDistance(Point, Goal) {	// diagonals are considered a little farther than cardinal directions
+     // diagonal movement using Euclide (AC = sqrt(AB^2 + BC^2))
+     // where AB = x2 - x1 and BC = y2 - y1 and AC will be [x3, y3]
+     return sqrt(pow(Point.x - Goal.x, 2) + pow(Point.y - Goal.y, 2));
+     }
+     */
 
     // Neighbours functions, used by findNeighbours function
     // to locate adjacent available cells that aren't blocked
@@ -190,93 +199,113 @@ Map.prototype.findPath = function (pathStart) {
     // Returns every available North, South, East or West
     // cell that is empty. No diagonals,
     // unless distanceFunction function is not Manhattan
-    function Neighbours(x, y) {
-        var N = y - 1,
-            S = y + 1,
-            E = x + 1,
-            W = x - 1,
-            myN = N > -1 && canWalkHere(x, N),
-            myS = S < worldHeight && canWalkHere(x, S),
-            myE = E < worldWidth && canWalkHere(E, y),
-            myW = W > -1 && canWalkHere(W, y),
+    function Neighbours( x, y ) {
+        var N      = y - 1,
+            S      = y + 1,
+            E      = x + 1,
+            W      = x - 1,
+            myN    = N > -1 && canWalkHere( x, N ),
+            myS    = S < worldHeight && canWalkHere( x, S ),
+            myE    = E < worldWidth && canWalkHere( E, y ),
+            myW    = W > -1 && canWalkHere( W, y ),
             result = [];
-        if (myN)
-            result.push({x: x, y: N});
-        if (myE)
-            result.push({x: E, y: y});
-        if (myS)
-            result.push({x: x, y: S});
-        if (myW)
-            result.push({x: W, y: y});
-        findNeighbours(myN, myS, myE, myW, N, S, E, W, result);
+        if ( myN ) {
+            result.push( {
+                    x: x,
+                    y: N
+                }
+            );
+        }
+        if ( myE ) {
+            result.push( {
+                    x: E,
+                    y: y
+                }
+            );
+        }
+        if ( myS ) {
+            result.push( {
+                    x: x,
+                    y: S
+                }
+            );
+        }
+        if ( myW ) {
+            result.push( {
+                    x: W,
+                    y: y
+                }
+            );
+        }
+        findNeighbours( myN, myS, myE, myW, N, S, E, W, result );
         return result;
     }
 
     /*
-    // returns every available North East, South East,
-    // South West or North West cell - no squeezing through
-    // "cracks" between two diagonals
-    function DiagonalNeighbours(myN, myS, myE, myW, N, S, E, W, result) {
-        if (myN) {
-            if (myE && canWalkHere(E, N))
-                result.push({x: E, y: N});
-            if (myW && canWalkHere(W, N))
-                result.push({x: W, y: N});
-        }
-        if (myS) {
-            if (myE && canWalkHere(E, S))
-                result.push({x: E, y: S});
-            if (myW && canWalkHere(W, S))
-                result.push({x: W, y: S});
-        }
-    }
+     // returns every available North East, South East,
+     // South West or North West cell - no squeezing through
+     // "cracks" between two diagonals
+     function DiagonalNeighbours(myN, myS, myE, myW, N, S, E, W, result) {
+     if (myN) {
+     if (myE && canWalkHere(E, N))
+     result.push({x: E, y: N});
+     if (myW && canWalkHere(W, N))
+     result.push({x: W, y: N});
+     }
+     if (myS) {
+     if (myE && canWalkHere(E, S))
+     result.push({x: E, y: S});
+     if (myW && canWalkHere(W, S))
+     result.push({x: W, y: S});
+     }
+     }
 
-    // returns every available North East, South East,
-    // South West or North West cell including the times that
-    // you would be squeezing through a "crack"
-    function DiagonalNeighboursFree(myN, myS, myE, myW, N, S, E, W, result) {
-        myN = N > -1;
-        myS = S < worldHeight;
-        myE = E < worldWidth;
-        myW = W > -1;
-        if (myE) {
-            if (myN && canWalkHere(E, N))
-                result.push({x: E, y: N});
-            if (myS && canWalkHere(E, S))
-                result.push({x: E, y: S});
-        }
-        if (myW) {
-            if (myN && canWalkHere(W, N))
-                result.push({x: W, y: N});
-            if (myS && canWalkHere(W, S))
-                result.push({x: W, y: S});
-        }
-    }
-*/
+     // returns every available North East, South East,
+     // South West or North West cell including the times that
+     // you would be squeezing through a "crack"
+     function DiagonalNeighboursFree(myN, myS, myE, myW, N, S, E, W, result) {
+     myN = N > -1;
+     myS = S < worldHeight;
+     myE = E < worldWidth;
+     myW = W > -1;
+     if (myE) {
+     if (myN && canWalkHere(E, N))
+     result.push({x: E, y: N});
+     if (myS && canWalkHere(E, S))
+     result.push({x: E, y: S});
+     }
+     if (myW) {
+     if (myN && canWalkHere(W, N))
+     result.push({x: W, y: N});
+     if (myS && canWalkHere(W, S))
+     result.push({x: W, y: S});
+     }
+     }
+     */
     // returns boolean value (world cell is available and open)
-    function canWalkHere(x, y) {
-        return ((world[x] != null) &&
-        (world[x][y] != null) &&
-        (world[x][y] <= maxWalkableTileNum));
+    function canWalkHere( x, y ) {
+        return ((world[ x ] != null) &&
+        (world[ x ][ y ] != null) &&
+        (world[ x ][ y ] <= maxWalkableTileNum));
     }
 
     // Node function, returns a new object with Node properties
     // Used in the calculatePath function to store route costs, etc.
-    function Node(Parent, Point) {
+    function Node( Parent, Point ) {
         var newNode = {
             // pointer to another Node object
             Parent: Parent,
             // array index of this Node in the world linear array
-            value: Point.x + (Point.y * worldWidth),
+            value : Point.x + (Point.y * worldWidth),
             // the location coordinates of this Node
-            x: Point.x,
-            y: Point.y,
+            x     : Point.x,
+            y     : Point.y,
             // the heuristic estimated cost
             // of an entire path using this node
-            f: 0,
+            f     : 0,
             // the distanceFunction cost to get
             // from the starting point to this node
-            g: 0
+            g     : 0
         };
 
         return newNode;
@@ -285,12 +314,20 @@ Map.prototype.findPath = function (pathStart) {
     // Path function, executes AStar algorithm operations
     function calculatePath() {
         // create Nodes from the Start and End x,y coordinates
-        var mypathStart = Node(null, {x: pathStart[0], y: pathStart[1]});
-        var mypathEnd = Node(null, {x: pathEnd[0], y: pathEnd[1]});
+        var mypathStart = Node( null, {
+            x: pathStart[ 0 ],
+            y: pathStart[ 1 ]
+        }
+        );
+        var mypathEnd   = Node( null, {
+            x: pathEnd[ 0 ],
+            y: pathEnd[ 1 ]
+        }
+        );
         // create an array that will contain all world cells
-        var AStar = new Array(worldSize);
+        var AStar = new Array( worldSize );
         // list of currently open Nodes
-        var Open = [mypathStart];
+        var Open = [ mypathStart ];
         // list of closed Nodes
         var Closed = [];
         // list of the final output array
@@ -304,25 +341,25 @@ Map.prototype.findPath = function (pathStart) {
         // temp integer variables used in the calculations
         var length, max, min, i, j;
         // iterate through the open list until none are left
-        while (length = Open.length) {
+        while ( length = Open.length ) {
             max = worldSize;
             min = -1;
-            for (i = 0; i < length; i++) {
-                if (Open[i].f < max) {
-                    max = Open[i].f;
+            for ( i = 0; i < length; i++ ) {
+                if ( Open[ i ].f < max ) {
+                    max = Open[ i ].f;
                     min = i;
                 }
             }
             // grab the next node and remove it from Open array
-            myNode = Open.splice(min, 1)[0];
+            myNode = Open.splice( min, 1 )[ 0 ];
             // is it the destination node?
-            if (myNode.value === mypathEnd.value) {
-                myPath = Closed[Closed.push(myNode) - 1];
+            if ( myNode.value === mypathEnd.value ) {
+                myPath = Closed[ Closed.push( myNode ) - 1 ];
                 do
                 {
-                    result.push([myPath.x, myPath.y]);
+                    result.push( [ myPath.x, myPath.y ] );
                 }
-                while (myPath = myPath.Parent);
+                while ( myPath = myPath.Parent );
                 // clear the working arrays
                 AStar = Closed = Open = [];
                 // we want to return start to finish
@@ -331,23 +368,23 @@ Map.prototype.findPath = function (pathStart) {
             else // not the destination
             {
                 // find which nearby nodes are walkable
-                myNeighbours = Neighbours(myNode.x, myNode.y);
+                myNeighbours = Neighbours( myNode.x, myNode.y );
                 // test each one that hasn't been tried already
-                for (i = 0, j = myNeighbours.length; i < j; i++) {
-                    myPath = Node(myNode, myNeighbours[i]);
-                    if (!AStar[myPath.value]) {
+                for ( i = 0, j = myNeighbours.length; i < j; i++ ) {
+                    myPath = Node( myNode, myNeighbours[ i ] );
+                    if ( !AStar[ myPath.value ] ) {
                         // estimated cost of this particular route so far
-                        myPath.g = myNode.g + distanceFunction(myNeighbours[i], myNode);
+                        myPath.g = myNode.g + distanceFunction( myNeighbours[ i ], myNode );
                         // estimated cost of entire guessed route to the destination
-                        myPath.f = myPath.g + distanceFunction(myNeighbours[i], mypathEnd);
+                        myPath.f = myPath.g + distanceFunction( myNeighbours[ i ], mypathEnd );
                         // remember this new path for testing above
-                        Open.push(myPath);
+                        Open.push( myPath );
                         // mark this node in the world graph as visited
-                        AStar[myPath.value] = true;
+                        AStar[ myPath.value ] = true;
                     }
                 }
                 // remember this route as having no more untested options
-                Closed.push(myNode);
+                Closed.push( myNode );
             }
         } // keep iterating until the Open list is empty
         return result;

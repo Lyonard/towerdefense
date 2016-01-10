@@ -2,10 +2,10 @@
  * Created by Roberto on 01/01/16.
  */
 
-var Monster1 = function(){
-    Monster.call(this);
-    this.hp = 10;
-    this.currentHp = 10;
+var Monster1 = function () {
+    Monster.call( this );
+    this.hp          = 10;
+    this.currentHp   = 10;
     this.cellPerTurn = 1;
 
 };

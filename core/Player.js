@@ -6,14 +6,14 @@ function Player() {
     this.money = TD.playerCoins;
 }
 
-Player.prototype.isDied = function(){
+Player.prototype.isDied = function () {
     return this.lives <= 0;
 };
 
-Player.prototype.beDamaged = function( damage ){
+Player.prototype.beDamaged = function ( damage ) {
     this.lives -= damage;
 };
 
-Player.prototype.addMoney= function (money){
+Player.prototype.addMoney = function ( money ) {
     this.money += money;
 };

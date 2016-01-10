@@ -1,7 +1,7 @@
 /**
  * Created by Roberto on 31/12/15.
  */
-function Cell(){
+function Cell() {
     //This has to be overidden in children.
     this.name = "Empty cell";
     this.type = 0;
@@ -9,32 +9,40 @@ function Cell(){
     this.content = [];
 }
 
-Cell.prototype.thereIsAMonster = function(){
-    for( var i = 0; i < this.content.length; i++){
-        if(this.content[i] instanceof Monster) return true;
+Cell.prototype.thereIsAMonster = function () {
+    for ( var i = 0; i < this.content.length; i++ ) {
+        if ( this.content[ i ] instanceof Monster ) {
+            return true;
+        }
     }
     return false;
 };
 
-Cell.prototype.thereIsATower = function(){
-    for( var i = 0; i < this.content.length; i++){
-        if(this.content[i] instanceof Tower) return true;
+Cell.prototype.thereIsATower = function () {
+    for ( var i = 0; i < this.content.length; i++ ) {
+        if ( this.content[ i ] instanceof Tower ) {
+            return true;
+        }
     }
     return false;
 };
 
-Cell.prototype.getEnemies = function(){
+Cell.prototype.getEnemies = function () {
     var enemies = [];
-    for( var i = 0; i < this.content.length; i++){
-        if(this.content[i] instanceof Monster) enemies.push(this.content[i]);
+    for ( var i = 0; i < this.content.length; i++ ) {
+        if ( this.content[ i ] instanceof Monster ) {
+            enemies.push( this.content[ i ] );
+        }
     }
     return enemies;
 };
 
-Cell.prototype.getTowers = function(){
+Cell.prototype.getTowers = function () {
     var towers = [];
-    for( var i = 0; i < this.content.length; i++){
-        if(this.content[i] instanceof Tower) towers.push(this.content[i]);
+    for ( var i = 0; i < this.content.length; i++ ) {
+        if ( this.content[ i ] instanceof Tower ) {
+            towers.push( this.content[ i ] );
+        }
     }
     return towers;
 };
@@ -44,16 +52,16 @@ Cell.prototype.getTowers = function(){
  * @param id
  * @returns {boolean}
  */
-Cell.prototype.removeEnemy = function(id){
+Cell.prototype.removeEnemy = function ( id ) {
     var idx = -1;
-    for(var i = 0; i < this.content.length; i++){
-        if(this.content[i] instanceof Monster && this.content[i].id == id) {
+    for ( var i = 0; i < this.content.length; i++ ) {
+        if ( this.content[ i ] instanceof Monster && this.content[ i ].id == id ) {
             idx = i;
             break;
         }
     }
-    if(idx > -1){
-        this.content.splice(idx,1);
+    if ( idx > -1 ) {
+        this.content.splice( idx, 1 );
         return true;
     }
     return false;
@@ -64,43 +72,47 @@ Cell.prototype.removeEnemy = function(id){
  * @param id
  * @returns {boolean}
  */
-Cell.prototype.removeTower = function( id ){
+Cell.prototype.removeTower = function ( id ) {
     var idx = -1;
-    for(var i = 0; i < this.content.length; i++){
-        if(this.content[i] instanceof Tower && this.content[i].id == id) {
+    for ( var i = 0; i < this.content.length; i++ ) {
+        if ( this.content[ i ] instanceof Tower && this.content[ i ].id == id ) {
             idx = i;
             break;
         }
     }
-    if(idx > -1){
-        this.content.splice(idx,1);
+    if ( idx > -1 ) {
+        this.content.splice( idx, 1 );
         return true;
     }
     return false;
 };
 
-Cell.prototype.addEnemy = function( enemy ){
-    if(this.thereIsATower())
+Cell.prototype.addEnemy = function ( enemy ) {
+    if ( this.thereIsATower() ) {
         throw "This cell contains a Tower";
+    }
 
-    if( !enemy instanceof Monster)
+    if ( !enemy instanceof Monster ) {
         throw "This is not a Monster";
+    }
 
     this.content.push( enemy );
     return enemy;
 };
 
-Cell.prototype.addTower = function( tower ){
-    if(this.thereIsAMonster())
+Cell.prototype.addTower = function ( tower ) {
+    if ( this.thereIsAMonster() ) {
         throw "This cell contains a Monster.";
+    }
 
-    if( !tower instanceof Tower)
+    if ( !tower instanceof Tower ) {
         throw "This is not a Tower";
+    }
 
     this.content.push( tower );
     return tower;
 };
 
-Cell.prototype.empty = function() {
+Cell.prototype.empty = function () {
     return !this.thereIsAMonster() && !this.thereIsATower();
 };

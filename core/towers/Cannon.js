@@ -1,11 +1,11 @@
 /**
  * Created by Roberto on 01/01/16.
  */
-function Cannon(){
-    Tower.call(this);
-    this.shotDamage = 1;
+function Cannon() {
+    Tower.call( this );
+    this.shotDamage  = 1;
     this.rangeRadius = 3;
-    this.price = 1;
+    this.price       = 1;
 
 }
 // inherit Tower
