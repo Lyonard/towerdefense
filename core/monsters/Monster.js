@@ -9,6 +9,10 @@ function Monster() {
     this.positionY   = 0 || TD.entry[ 1 ];
     this.id          = TD.monsterAutoIncrement;
 
+    this.ui = {
+        image: "#333"
+
+    };
     TD.monsterAutoIncrement++;
 }
 
@@ -38,6 +42,10 @@ Monster.prototype.doMove = function () {
     var movesLeft = this.cellPerTurn;
     while ( movesLeft > 0 ) {
         var nextCell = pathToExit.splice( 0, 1 );
+        if ( nextCell.length == 0 ) {
+            break;
+        }
+
         this.move( nextCell[ 0 ] );
         movesLeft--;
     }
@@ -51,8 +59,9 @@ Monster.prototype.move = function ( cell ) {
     this.positionX = cell[ 0 ];
     this.positionY = cell[ 1 ];
 
-    if ( cell == TD.exit ) {
-        TD.events.exitReached();
+    if ( cell.equalsPositional( TD.exit ) ) {
+        TD.events.exitReached( this );
+        return;
     }
 
     TD.globalFunctions.addEnemy( this, [ this.positionX, this.positionY ] )

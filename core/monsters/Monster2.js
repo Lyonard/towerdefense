@@ -1,17 +1,16 @@
 /**
- * Created by Roberto on 01/01/16.
+ * Created by Roberto on 20/01/16.
  */
-
-var Monster1 = function () {
+var Monster2 = function () {
     Monster.call( this );
     this.hp          = 5;
     this.currentHp   = 5;
-    this.cellPerTurn = 5;
+    this.cellPerTurn = 1;
 
 };
 // inherit Monster
-Monster1.prototype = new Monster();
+Monster2.prototype = new Monster();
 
 // correct the constructor pointer because it points to Monster
-Monster1.prototype.constructor = Monster1;
+Monster2.prototype.constructor = Monster2;
 
