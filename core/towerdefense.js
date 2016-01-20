@@ -2,9 +2,9 @@
  * Created by Roberto on 31/12/15.
  */
 var TD = TD || {
-        size                : [ 10, 10 ],
-        entry               : [ 0, 4 ],
-        exit                : [ 9, 4 ],
+        size                : [ 20, 20 ],
+        entry               : [ 0, 9 ],
+        exit                : [ 19, 9 ],
         monsterAutoIncrement: 1,
         towerAutoIncrement  : 1,
         playerLives         : 10,
@@ -25,7 +25,26 @@ TD.init = function () {
 
 TD.game = {
     startGame: function () {
+        MapUI.renderMap();
+    },
+    playTurn : function () {
+        //iterate over all the towers
+        //make towers do the move
+        for ( var i = 0; i < TD.towers.length; i++ ) {
+            TD.towers[ i ].doMove();
+        }
 
+        //iterate over all the enemies
+        //make enemies do the move
+
+        //this is for avoiding to pick the same enemy due to the position switch
+        var currentEnemies = TD.enemies.clone();
+        for ( var j = 0; j < currentEnemies.length; j++ ) {
+            currentEnemies[ j ].doMove();
+        }
+
+        //render new state
+        MapUI.renderMap();
     },
     gameOver : function () {
         console.log( "gameOver" );
@@ -107,15 +126,20 @@ TD.globalFunctions = {
 
 TD.events = {
     exitReached: function ( monster ) {
+        console.group("monster reached exit!");
+        console.log(monster);
+
         //evaluate hearts to be removed to the player.
         var damage = monster.hp;
+        console.log("damage: " + damage);
         TD.player.beDamaged( damage );
-        //remove the monster from the map
-        TD.globalFunctions.removeEnemy( monster );
+
         //check if the player is died
         if ( TD.player.isDied() ) {
             TD.game.gameOver();
         }
+        console.log(TD.player.lives + " lives left");
+        console.groupEnd();
     },
     monsterDied: function ( monster ) {
         //get monster money value
@@ -124,10 +148,25 @@ TD.events = {
         //add this value to players's money
         TD.player.addMoney( money );
     }
-
 };
 
 TD.test = {
+    testGame       : function () {
+        console.group( "Test Game" );
+        TD.init();
+        TD.globalFunctions.addEnemy( new Monster1() );
+        TD.globalFunctions.addEnemy( new Monster2() );
+        TD.globalFunctions.addTower( new Cannon(), [ 5, 5 ] );
+        TD.test.showMap();
+        MapUI.renderMap();
+
+        setTimeout( function () {
+            TD.game.playTurn();
+            TD.test.showMap();
+            MapUI.renderMap();
+        },2000);
+        console.groupEnd();
+    },
     addEnemyAndMove: function () {
         TD.globalFunctions.addEnemy( new Monster1() );
         console.log( TD.enemies[ 0 ] );

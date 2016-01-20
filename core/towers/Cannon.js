@@ -4,7 +4,7 @@
 function Cannon() {
     Tower.call( this );
     this.shotDamage  = 1;
-    this.rangeRadius = 3;
+    this.rangeRadius = 6;
     this.price       = 1;
 
 }

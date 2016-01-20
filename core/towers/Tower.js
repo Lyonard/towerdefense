@@ -9,6 +9,11 @@ function Tower() {
     this.distanceFunction = this.distances.euclidean;
     this.price            = 0;
 
+    this.ui = {
+        image : "#ccc"
+
+    };
+
     this.id = TD.towerAutoIncrement;
 
     TD.towerAutoIncrement++;
@@ -160,5 +165,7 @@ Tower.prototype.doMove = function () {
     var enemiesInRange = this.getEnemiesInRadius();
     var target         = this.heuristics.closest( enemiesInRange, this.distanceFunction, this );
 
-    this.attack( target );
+    if(target != null) {
+        this.attack( target );
+    }
 };
