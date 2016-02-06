@@ -2,9 +2,9 @@
  * Created by Roberto on 31/12/15.
  */
 var TD = TD || {
-        size                : [ 20, 20 ],
-        entry               : [ 0, 9 ],
-        exit                : [ 19, 9 ],
+        size                : [ 10, 10 ],
+        entry               : [ 0, 5 ],
+        exit                : [ 9, 5 ],
         monsterAutoIncrement: 1,
         towerAutoIncrement  : 1,
         playerLives         : 10,
@@ -65,6 +65,8 @@ TD.globalFunctions = {
         var startX = position[ 0 ];
         var startY = position[ 1 ];
         TD.map.grid[ startX ][ startY ].addEnemy( enemy );
+        TD.map.evalAlphaGrid();
+
         return enemy;
     },
 
@@ -78,6 +80,13 @@ TD.globalFunctions = {
         var posY = position[ 1 ];
         tower.setPos( position );
         TD.map.grid[ posX ][ posY ].addTower( tower );
+        TD.map.evalAlphaGrid();
+
+        if(!TD.map.pathExists()){
+            TD.map.grid[ posX ][ posY ].removeTower( tower );
+            TD.map.evalAlphaGrid();
+            throw "Position forbidden.";
+        }
         return tower;
     },
 
@@ -129,6 +138,8 @@ TD.events = {
         console.group("monster reached exit!");
         console.log(monster);
 
+        MapUI.removeMonsterOrTower( monster );
+
         //evaluate hearts to be removed to the player.
         var damage = monster.hp;
         console.log("damage: " + damage);
@@ -142,6 +153,8 @@ TD.events = {
         console.groupEnd();
     },
     monsterDied: function ( monster ) {
+        MapUI.removeMonsterOrTower( monster );
+
         //get monster money value
         var money = monster.getMoneyValue();
 
@@ -156,7 +169,7 @@ TD.test = {
         TD.init();
         TD.globalFunctions.addEnemy( new Monster1() );
         TD.globalFunctions.addEnemy( new Monster2() );
-        TD.globalFunctions.addTower( new Cannon(), [ 5, 5 ] );
+        TD.globalFunctions.addTower( new Cannon(), [ 5, 2 ] );
         TD.test.showMap();
         MapUI.renderMap();
 
@@ -167,11 +180,23 @@ TD.test = {
         },2000);
         console.groupEnd();
     },
-    addEnemyAndMove: function () {
+    testImpossibleGame: function(){
+        console.group( "Test impossible Game" );
+        TD.init();
         TD.globalFunctions.addEnemy( new Monster1() );
-        console.log( TD.enemies[ 0 ] );
-        TD.enemies[ 0 ].doMove();
-        console.log( TD.enemies[ 0 ] );
+        TD.globalFunctions.addEnemy( new Monster2() );
+        TD.globalFunctions.addTower( new Cannon(), [ 0, 4 ] );
+        TD.globalFunctions.addTower( new Cannon(), [ 0, 6 ] );
+        TD.globalFunctions.addTower( new Cannon(), [ 1, 5 ] );
+        TD.test.showMap();
+        MapUI.renderMap();
+
+        setTimeout( function () {
+            TD.game.playTurn();
+            TD.test.showMap();
+            MapUI.renderMap();
+        },2000);
+        console.groupEnd();
     },
     showMap        : function () {
         var map      = TD.map.grid;

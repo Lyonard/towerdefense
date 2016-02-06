@@ -10,7 +10,7 @@ function Monster() {
     this.id          = TD.monsterAutoIncrement;
 
     this.ui = {
-        image: "#333"
+        image: "img/goblin.png"
 
     };
     TD.monsterAutoIncrement++;

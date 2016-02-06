@@ -89,6 +89,14 @@ Map.prototype.initGrid = function () {
     }
 };
 
+/**
+ * Returns true if exists a path from entry point to exit point
+ * @returns {boolean}
+ */
+Map.prototype.pathExists = function(){
+    return this.findPath(TD.entry ).length > 0;
+};
+
 Map.prototype.evalAlphaGrid = function () {
     this.alphaGrid = [];
     for ( var i = 0; i < this.width; i++ ) {
@@ -117,9 +125,7 @@ Map.heurustics = {
  * Andrea Giammarchi, Alessandro Crugnola, Jeroen Beckers
  * Peter Hart, Nils Nilsson, Bertram Raphael
 
- * @param world {Array}
  * @param pathStart {Array}
- * @param pathEnd {Array}
  * @returns {*}
  */
 Map.prototype.findPath = function ( pathStart ) {
@@ -241,47 +247,6 @@ Map.prototype.findPath = function ( pathStart ) {
         return result;
     }
 
-    /*
-     // returns every available North East, South East,
-     // South West or North West cell - no squeezing through
-     // "cracks" between two diagonals
-     function DiagonalNeighbours(myN, myS, myE, myW, N, S, E, W, result) {
-     if (myN) {
-     if (myE && canWalkHere(E, N))
-     result.push({x: E, y: N});
-     if (myW && canWalkHere(W, N))
-     result.push({x: W, y: N});
-     }
-     if (myS) {
-     if (myE && canWalkHere(E, S))
-     result.push({x: E, y: S});
-     if (myW && canWalkHere(W, S))
-     result.push({x: W, y: S});
-     }
-     }
-
-     // returns every available North East, South East,
-     // South West or North West cell including the times that
-     // you would be squeezing through a "crack"
-     function DiagonalNeighboursFree(myN, myS, myE, myW, N, S, E, W, result) {
-     myN = N > -1;
-     myS = S < worldHeight;
-     myE = E < worldWidth;
-     myW = W > -1;
-     if (myE) {
-     if (myN && canWalkHere(E, N))
-     result.push({x: E, y: N});
-     if (myS && canWalkHere(E, S))
-     result.push({x: E, y: S});
-     }
-     if (myW) {
-     if (myN && canWalkHere(W, N))
-     result.push({x: W, y: N});
-     if (myS && canWalkHere(W, S))
-     result.push({x: W, y: S});
-     }
-     }
-     */
     // returns boolean value (world cell is available and open)
     function canWalkHere( x, y ) {
         return ((world[ x ] != null) &&

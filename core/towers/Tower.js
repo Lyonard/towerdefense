@@ -10,7 +10,7 @@ function Tower() {
     this.price            = 0;
 
     this.ui = {
-        image : "#ccc"
+        image : "img/archertower.png"
 
     };
 

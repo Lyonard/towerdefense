@@ -2,60 +2,72 @@
  * Created by Roberto on 10/01/16.
  */
 var MapUI = MapUI || {
-        unit        : "px",
-        tileWidth   : 32,
-        canvasWidth : 0,
-        canvasHeight: 0,
-        canvas      : null
+        unit       : "px",
+        tileWidth  : 64,
+        stageWidth : 0,
+        stageHeight: 0,
+        stage      : null,
+        renderer   : null
     };
 
 MapUI.init = function () {
-    var numRows        = TD.size[ 0 ];
-    var numCols        = TD.size[ 1 ];
-    MapUI.canvasWidth  = MapUI.tileWidth * numRows;
-    MapUI.canvasHeight = MapUI.tileWidth * numCols;
+    var numRows       = TD.size[ 0 ];
+    var numCols       = TD.size[ 1 ];
+    MapUI.stageWidth  = MapUI.tileWidth * numRows;
+    MapUI.stageHeight = MapUI.tileWidth * numCols;
 
     this.loadCanvas();
 
-    this.loadBackground( MapUI.canvas );
-    this.renderEntry( MapUI.canvas );
-    this.renderExit( MapUI.canvas );
+    this.loadBackground();
+    this.renderEntry();
+    this.renderExit();
+    requestAnimationFrame( MapUI.animate );
 };
 
 MapUI.loadCanvas = function () {
-    var canvas = MapUI.canvas = document.createElement( "canvas" );
-    var ctx       = canvas.getContext( "2d" );
-    canvas.width  = MapUI.canvasWidth;
-    canvas.height = MapUI.canvasHeight;
-    document.body.appendChild( canvas );
+    // The renderer will create a canvas element for you that you can then insert into the DOM.
+    MapUI.renderer = new PIXI.autoDetectRenderer( MapUI.stageWidth, MapUI.stageHeight );
+
+    document.body.appendChild( MapUI.renderer.view );
+
+    // You need to create a root container that will hold the scene you want to draw.
+    MapUI.stage = new PIXI.Container();
 };
 
-MapUI.renderTile = function(ctx, fillStyle, positionStart){
-    ctx.fillStyle = fillStyle;
-    ctx.fillRect(positionStart[0], positionStart[1], MapUI.tileWidth, MapUI.tileWidth);
+/**
+ * Renders a tile
+ * @param imgPath the path to the image based on the project root
+ * @param position an array of 2 coords
+ * @returns {PIXI.Sprite}
+ */
+MapUI.renderTile = function ( imgPath, position ) {
+
+    var texture = PIXI.Texture.fromImage( imgPath );
+    var tile    = new PIXI.Sprite( texture );
+
+    tile.width = tile.height = MapUI.tileWidth;
+
+    tile.anchor.x = 0;
+    tile.anchor.y = 0;
+
+    tile.position.x = position[ 0 ];
+    tile.position.y = position[ 1 ];
+
+    MapUI.stage.addChild( tile );
+    return tile;
 };
 
-MapUI.loadBackground = function ( canvas ) {
-    var ctx = canvas.getContext( "2d" );
+MapUI.loadBackground = function () {
+    var texture      = PIXI.Texture.fromImage( "img/grass.png" );
+    var tilingSprite = new PIXI.extras.TilingSprite( texture, window.innerWidth, window.innerHeight );
 
-    var bgImage = new Image();
-    bgImage.src = "img/grass.png";
-
-    bgImage.onload = function () {
-        ctx.globalCompositeOperation='destination-over';
-        var pat       = ctx.createPattern( bgImage, "repeat" );
-        ctx.fillStyle = pat;
-        ctx.fillRect( 0, 0, canvas.width, canvas.height );
-        ctx.globalCompositeOperation='source-over';
-    };
+    MapUI.stage.addChild( tilingSprite );
+    MapUI.renderer.render( MapUI.stage );
 };
 
-MapUI.renderEntry = function ( canvas ) {
-    var ctx       = canvas.getContext( "2d" );
-    ctx.fillStyle = "#0f0";
+MapUI.renderEntry = function () {
     MapUI.renderTile(
-        ctx,
-        "#0f0",
+        "img/entry.png",
         [
             TD.entry[ 0 ] * MapUI.tileWidth,
             TD.entry[ 1 ] * MapUI.tileWidth
@@ -63,12 +75,9 @@ MapUI.renderEntry = function ( canvas ) {
     );
 };
 
-MapUI.renderExit = function ( canvas ) {
-    var ctx       = canvas.getContext( "2d" );
-
+MapUI.renderExit = function () {
     MapUI.renderTile(
-        ctx,
-        "#f00",
+        "img/exit.png",
         [
             TD.exit[ 0 ] * MapUI.tileWidth,
             TD.exit[ 1 ] * MapUI.tileWidth
@@ -76,11 +85,13 @@ MapUI.renderExit = function ( canvas ) {
     );
 };
 
-MapUI.renderMonsterOrTower = function (canvas, element, position){
-    var ctx       = canvas.getContext( "2d" );
-
-    MapUI.renderTile(
-        ctx,
+/**
+ * Renders a monster/tower tile in the map and sets a reference to the tile into the monster itself
+ * @param element
+ * @param position
+ */
+MapUI.renderMonsterOrTower = function ( element, position ) {
+    element.ui.tile = MapUI.renderTile(
         element.ui.image,
         [
             position[ 0 ] * MapUI.tileWidth,
@@ -89,27 +100,43 @@ MapUI.renderMonsterOrTower = function (canvas, element, position){
     );
 };
 
-MapUI.renderMap = function(){
+MapUI.updateMonsterOrTower = function ( element, position ) {
+    element.ui.tile.x = position[ 0 ] * MapUI.tileWidth;
+    element.ui.tile.y = position[ 1 ] * MapUI.tileWidth;
+};
+
+MapUI.removeMonsterOrTower = function ( element ){
+    MapUI.stage.removeChild ( element.ui.tile );
+};
+
+MapUI.renderMap = function () {
     var enemies = TD.enemies;
-    var towers = TD.towers;
+    var towers  = TD.towers;
 
-    if(typeof MapUI.canvas != 'undefined') {
-        document.body.removeChild( MapUI.canvas );
+    for ( var i = 0; i < enemies.length; i++ ) {
+        var position = [ enemies[ i ].getX(), enemies[ i ].getY() ];
+        if ( typeof enemies[ i ].ui.tile == 'undefined' ) {
+            this.renderMonsterOrTower( enemies[ i ], position );
+        }
+        else {
+            this.updateMonsterOrTower( enemies[ i ], position );
+        }
     }
 
-    this.loadCanvas();
-
-    this.loadBackground( MapUI.canvas );
-    this.renderEntry( MapUI.canvas );
-    this.renderExit( MapUI.canvas );
-
-    for(var i = 0; i < enemies.length; i++){
-        var position = [ enemies[i].getX(), enemies[i].getY() ];
-        this.renderMonsterOrTower(MapUI.canvas, enemies[i], position);
+    for ( i = 0; i < towers.length; i++ ) {
+        position = [ towers[ i ].getX(), towers[ i ].getY() ];
+        if ( typeof towers[ i ].ui.tile == 'undefined' ) {
+            this.renderMonsterOrTower( towers[ i ], position );
+        }
+        else {
+            this.updateMonsterOrTower( towers[ i ], position );
+        }
     }
 
-    for( i = 0; i < towers.length; i++){
-        position = [ towers[i].getX(), towers[i].getY() ];
-        this.renderMonsterOrTower(MapUI.canvas, towers[i], position);
-    }
+    requestAnimationFrame( MapUI.animate );
+};
+
+MapUI.animate = function () {
+    requestAnimationFrame( MapUI.animate );
+    MapUI.renderer.render( MapUI.stage );
 };
