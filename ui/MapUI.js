@@ -21,6 +21,8 @@ MapUI.init = function () {
     this.loadBackground();
     this.renderEntry();
     this.renderExit();
+
+    Hub.render( TD.playerLives, TD.playerCoins, 10 );
     requestAnimationFrame( MapUI.animate );
 };
 
